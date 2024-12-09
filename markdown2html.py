@@ -12,20 +12,18 @@ def paragraph_handler(lines):
     Returns: mardown paragraph processed as HTML <p>,
             rest of file and line_count to conitnue parsing
     """
-    html_parag = []
+    paragraph_lines = []
     line_count = 0
-    for line in lines:
-        if not line:
-            line_count += 1
-            break
-        if line[0].isupper():
-            html_parag.append(f"<p>\n{line}")
-            line_count += 1
-        else:
-            html_parag.append(f"<br />\n{line}")
-            line_count += 1
-    html_parag.append('</p>')
 
+    for line in lines:
+        if line.strip() == '':
+            break
+        if line_count > 0:
+            paragraph_lines.append('<br />')
+        paragraph_lines.append(line)
+        line_count += 1
+
+    html_parag = ["<p>", *paragraph_lines, "</p>"]
     return html_parag, line_count
 
 
@@ -103,7 +101,7 @@ def markdown2html(markdown_content):
             html_lines.extend(list_html)
             i += line_count
             continue
-        elif line[0].isalnum():
+        elif line.strip() and not line.startswith(('# ', '- ', '* ')):
             paragraph_html, line_count = paragraph_handler(lines[i:])
             html_lines.extend(paragraph_html)
             i += line_count
