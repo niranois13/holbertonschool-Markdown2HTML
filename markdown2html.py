@@ -4,6 +4,31 @@ import sys
 import os
 
 
+def paragraph_handler(lines):
+    """
+    Function helper to handle the parsing of paragraphs
+    :params lines: str - lines of a markdown file
+                    starting with an alphanumeric character
+    Returns: mardown paragraph processed as HTML <p>,
+            rest of file and line_count to conitnue parsing
+    """
+    html_parag = []
+    line_count = 0
+    for line in lines:
+        if not line:
+            line_count += 1
+            break
+        if line[0].isupper():
+            html_parag.append(f"<p>\n{line}")
+            line_count += 1
+        else:
+            html_parag.append(f"<br />\n{line}")
+            line_count += 1
+    html_parag.append('</p>')
+
+    return html_parag, line_count
+
+
 def ulist_handler(lines):
     """
     Function helper to handle the parsing of unordered lists
@@ -26,9 +51,9 @@ def ulist_handler(lines):
 
 def olist_handler(lines):
     """
-    Function helper to handle the parsing of unordered lists
+    Function helper to handle the parsing of ordered lists
     :params lines: str - lines of a markdown file after a list marker ("- ")
-    Returns: markdown list processed as HTML unordered lists,
+    Returns: markdown list processed as HTML ordered lists,
             rest of the file and a list count to continue parsing
     """
     html_list = ["<ol>"]
@@ -76,6 +101,11 @@ def markdown2html(markdown_content):
         elif line.startswith("* "):
             list_html, line_count = olist_handler(lines[i:])
             html_lines.extend(list_html)
+            i += line_count
+            continue
+        elif line[0].isalnum():
+            paragraph_html, line_count = paragraph_handler(lines[i:])
+            html_lines.extend(paragraph_html)
             i += line_count
             continue
         i += 1
