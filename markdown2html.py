@@ -4,6 +4,26 @@ import sys
 import os
 
 
+def list_handler(lines):
+    """
+    Function helper to handle the parsing of lists
+    :params lines: str - lines of a markdown file after a list marker ("- ")
+    Returns: markdown list processed as HTML unordered lists,
+            rest of the file and a list count to continue parsing
+            """
+    html_list = ["<ul>"]
+    line_count = 0
+    for line in lines:
+        if line.startswith('- '):
+            html_list.append(f"<li>{line[2:]}</li>")
+            line_count += 1
+        else:
+            break
+    html_list.append('</ul>')
+
+    return html_list, line_count
+
+
 def markdown2html(markdown_content):
     """
     Function used to convert Markdown text into HTML file
@@ -11,7 +31,11 @@ def markdown2html(markdown_content):
     Returns: the output content
     """
     html_lines = []
-    for line in markdown_content.splitlines():
+    lines = markdown_content.splitlines()
+    i = 0
+
+    while i < len(lines):
+        line = lines[i]
         if line.startswith("# "):
             html_lines.append(f"<h1>{line[2:]}</h1>")
         elif line.startswith("## "):
@@ -24,6 +48,12 @@ def markdown2html(markdown_content):
             html_lines.append(f"<h5>{line[6:]}</h5>")
         elif line.startswith("###### "):
             html_lines.append(f"<h6>{line[7:]}</h6>")
+        elif line.startswith("- "):
+            list_html, line_count = list_handler(lines[i:])
+            html_lines.extend(list_html)
+            i += line_count
+        i += 1
+
     return "\n".join(html_lines)
 
 
