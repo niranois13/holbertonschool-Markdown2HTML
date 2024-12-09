@@ -4,15 +4,15 @@ import sys
 import os
 
 
-def list_handler(lines):
+def ulist_handler(lines):
     """
-    Function helper to handle the parsing of lists
+    Function helper to handle the parsing of unordered lists
     :params lines: str - lines of a markdown file after a list marker ("- ")
     Returns: markdown list processed as HTML unordered lists,
             rest of the file and a list count to continue parsing
-            """
+    """
     html_list = ["<ul>"]
-    line_count = 0
+    line_count = -1
     for line in lines:
         if line.startswith('- '):
             html_list.append(f"<li>{line[2:]}</li>")
@@ -20,6 +20,25 @@ def list_handler(lines):
         else:
             break
     html_list.append('</ul>')
+
+    return html_list, line_count
+
+def olist_handler(lines):
+    """
+    Function helper to handle the parsing of unordered lists
+    :params lines: str - lines of a markdown file after a list marker ("- ")
+    Returns: markdown list processed as HTML unordered lists,
+            rest of the file and a list count to continue parsing
+    """
+    html_list = ["<ol>"]
+    line_count = -1
+    for line in lines:
+        if line.startswith('* '):
+            html_list.append(f"<li>{line[2:]}</li>")
+            line_count += 1
+        else:
+            break
+    html_list.append('</ol>')
 
     return html_list, line_count
 
@@ -49,7 +68,11 @@ def markdown2html(markdown_content):
         elif line.startswith("###### "):
             html_lines.append(f"<h6>{line[7:]}</h6>")
         elif line.startswith("- "):
-            list_html, line_count = list_handler(lines[i:])
+            list_html, line_count = ulist_handler(lines[i:])
+            html_lines.extend(list_html)
+            i += line_count
+        elif line.startswith("* "):
+            list_html, line_count = olist_handler(lines[i:])
             html_lines.extend(list_html)
             i += line_count
         i += 1
