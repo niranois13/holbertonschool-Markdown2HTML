@@ -12,7 +12,7 @@ def ulist_handler(lines):
             rest of the file and a list count to continue parsing
     """
     html_list = ["<ul>"]
-    line_count = -1
+    line_count = 0
     for line in lines:
         if line.startswith('- '):
             html_list.append(f"<li>{line[2:]}</li>")
@@ -23,6 +23,7 @@ def ulist_handler(lines):
 
     return html_list, line_count
 
+
 def olist_handler(lines):
     """
     Function helper to handle the parsing of unordered lists
@@ -31,7 +32,7 @@ def olist_handler(lines):
             rest of the file and a list count to continue parsing
     """
     html_list = ["<ol>"]
-    line_count = -1
+    line_count = 0
     for line in lines:
         if line.startswith('* '):
             html_list.append(f"<li>{line[2:]}</li>")
@@ -71,10 +72,12 @@ def markdown2html(markdown_content):
             list_html, line_count = ulist_handler(lines[i:])
             html_lines.extend(list_html)
             i += line_count
+            continue
         elif line.startswith("* "):
             list_html, line_count = olist_handler(lines[i:])
             html_lines.extend(list_html)
             i += line_count
+            continue
         i += 1
 
     return "\n".join(html_lines)
