@@ -15,7 +15,7 @@ def main():
     markdown_file = sys.argv[1]
 
     if not os.path.exists(markdown_file):
-        print(f"Missing {markdown_file}", file=sys.stderr)
+        print(f"Missing README.md", file=sys.stderr)
         sys.exit(1)
 
     sys.exit(0)
