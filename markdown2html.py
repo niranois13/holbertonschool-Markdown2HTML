@@ -19,21 +19,7 @@ def main():
         print(f"Missing {markdown_file}", file=sys.stderr)
         sys.exit(1)
 
-    try:
-        with open(markdown_file, "r", encoding="utf-8") as md_file:
-            markdown_content = md_file.read()
-    except Exception as e:
-        print(f"Error reading {markdown_file}: {e}", file=sys.stderr)
-        sys.exit(1)
-
-    try:
-        with open(output_file, "w", encoding="utf-8") as html_file:
-            html_file.write(markdown_content)
-    except Exception as e:
-        print(f"Error writing to {output_file}: {e}", file=sys.stderr)
-        sys.exit(1)
-
-    exit (0)
+    sys.exit(0)
 
 if __name__ == "__main__":
     main()
