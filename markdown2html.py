@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 """Function to convert MarkDown into HTML"""
-
 import sys
 import os
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("Usage: ./markdown2html.py README.md README.html", file=sys.stderr)
+        print("Usage: ./markdown2html.py README.md README.html",
+              file=sys.stderr)
         sys.exit(1)
 
     markdown_file = sys.argv[1]
