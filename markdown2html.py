@@ -67,6 +67,50 @@ def olist_handler(lines):
     return html_list, line_count
 
 
+def inline_formating(line):
+    """
+    Function used to handle formating: converts markdown bold and italic
+    syntax to the HTML one:
+    **bold** to <b>bold</b> and _italic_ to <em>italic</em>.
+    :params line: str - the line to be checked for special formating.
+    Returns: the correctly formated line.
+    """
+    formatted_line = []
+    i = 0
+
+    print(f'Input line: {line}')
+
+    while i < len(line):
+        if line[i:i+2] == '**':
+            next_b_tag = line.find('**', i+2)
+            if next_b_tag != -1:
+                formatted_line.append('<b>')
+                formatted_line.append(line[i+2:next_b_tag])
+                formatted_line.append('</b>')
+                i = next_b_tag + 2
+            else:
+                formatted_line.append(line[i])
+                print(f'After append bold loop: {formatted_line} - index: {i}')
+                i += 1
+        elif line[i:i+2] == '__':
+            next_em_tag = line.find('__', i+2)
+            if next_em_tag != -1:
+                formatted_line.append('<em>')
+                formatted_line.append(line[i+2:next_em_tag])
+                formatted_line.append('</em>')
+                i = next_em_tag + 2
+            else:
+                formatted_line.append(line[i])
+                i += 1
+        else:
+            formatted_line.append(line[i])
+            i += 1
+
+    result = "".join(formatted_line)
+    print(f'Joined lines: {result}')
+    return result
+
+
 def markdown2html(markdown_content):
     """
     Function used to convert Markdown text into HTML file
@@ -75,10 +119,11 @@ def markdown2html(markdown_content):
     """
     html_lines = []
     lines = markdown_content.splitlines()
+    formatted_lines = [inline_formating(line) for line in lines]
     i = 0
 
-    while i < len(lines):
-        line = lines[i]
+    while i < len(formatted_lines):
+        line = formatted_lines[i]
         if line.startswith("# "):
             html_lines.append(f"<h1>{line[2:]}</h1>")
         elif line.startswith("## "):
@@ -92,17 +137,17 @@ def markdown2html(markdown_content):
         elif line.startswith("###### "):
             html_lines.append(f"<h6>{line[7:]}</h6>")
         elif line.startswith("- "):
-            list_html, line_count = ulist_handler(lines[i:])
+            list_html, line_count = ulist_handler(formatted_lines[i:])
             html_lines.extend(list_html)
             i += line_count
             continue
         elif line.startswith("* "):
-            list_html, line_count = olist_handler(lines[i:])
+            list_html, line_count = olist_handler(formatted_lines[i:])
             html_lines.extend(list_html)
             i += line_count
             continue
         elif line.strip() and not line.startswith(('# ', '- ', '* ')):
-            paragraph_html, line_count = paragraph_handler(lines[i:])
+            paragraph_html, line_count = paragraph_handler(formatted_lines[i:])
             html_lines.extend(paragraph_html)
             i += line_count
             continue
