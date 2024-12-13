@@ -106,13 +106,13 @@ def em_formating(line):
     i = 0
 
     while i < len(line):
-        if line[i] == '_' and line[i-1] != "\\":
-            next_em_tag = line.find('_', i+1)
+        if line[i:i+2] == '__' and line[i-1] != "\\":
+            next_em_tag = line.find('__', i+2)
             if next_em_tag != -1:
                 formatted_line.append('<em>')
-                formatted_line.append(line[i+1:next_em_tag])
+                formatted_line.append(line[i+2:next_em_tag])
                 formatted_line.append('</em>')
-                i = next_em_tag + 1
+                i = next_em_tag + 2
             else:
                 formatted_line.append(line[i])
                 i += 1
