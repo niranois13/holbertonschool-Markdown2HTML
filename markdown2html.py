@@ -77,8 +77,6 @@ def b_formating(line):
     formatted_line = []
     i = 0
 
-    print(f'Input line: {line}')
-
     while i < len(line):
         if line[i:i+2] == '**' and line[i-1] != "\\":
             next_b_tag = line.find('**', i+2)
