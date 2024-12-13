@@ -2,6 +2,7 @@
 """Function to convert MarkDown into HTML"""
 import sys
 import os
+import hashlib
 
 
 def paragraph_handler(lines):
@@ -123,6 +124,64 @@ def em_formating(line):
     return "".join(formatted_line)
 
 
+def hash_formating(line):
+    """
+    Function used to convert a markdown md5 tag into a hashed lowercase string:
+    [[to hash]] into "337b9d8dcdceb352a452b488463e24a7"
+    :params line: str - a line of the markdown to be passed for md5 hash
+    Returns: a string containing the hash result
+    """
+    formatted_line = []
+    i = 0
+
+    while i < len(line):
+        if line[i:i+2] == '[[' and line[i-1] != "\\":
+            next_hash_tag = line.find(']]', i+2)
+            if next_hash_tag != -1:
+                to_hash_part = line[i+2:next_hash_tag]
+                hashed_part = hashlib.md5(to_hash_part.encode()).hexdigest()
+                formatted_line.append(hashed_part)
+                i = next_hash_tag + 2
+            else:
+                formatted_line.append(line[i])
+                i += 1
+        else:
+            formatted_line.append(line[i])
+            i += 1
+
+    return "".join(formatted_line)
+
+
+def c_section(line):
+    """
+    Function used to remove all occurence of the letter 'c' - case insensitive:
+    'I love my ((Chinchilla))' turns to 'I love my hinhilla'
+    :params line: str - The string to be c sectionned.
+    Return: The string without 'c'
+    """
+    formatted_line = []
+    i = 0
+
+    while i < len(line):
+        if line[i:i+2] == '((' and line[i-1] != '\\':
+            next_Csection_tag = line.find('))', i+2)
+            if next_Csection_tag != -1:
+                to_section_part = line[i+2:next_Csection_tag]
+                sectionned_part = ''.join(
+                    [ch for ch in to_section_part if ch.lower() != 'c']
+                    )
+                formatted_line.append(sectionned_part)
+                i = next_Csection_tag + 2
+            else:
+                formatted_line.append(line[i])
+                i += 1
+        else:
+            formatted_line.append(line[i])
+            i += 1
+
+    return ''.join(formatted_line)
+
+
 def markdown2html(markdown_content):
     """
     Function used to convert Markdown text into HTML file
@@ -131,7 +190,9 @@ def markdown2html(markdown_content):
     """
     html_lines = []
     lines = markdown_content.splitlines()
-    b_formatted_lines = [b_formating(line) for line in lines]
+    c_sectioned_lines = [c_section(line) for line in lines]
+    hashed_lines = [hash_formating(line) for line in c_sectioned_lines]
+    b_formatted_lines = [b_formating(line) for line in hashed_lines]
     formatted_lines = [em_formating(line) for line in b_formatted_lines]
     i = 0
 
