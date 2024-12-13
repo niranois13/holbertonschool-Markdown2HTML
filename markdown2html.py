@@ -67,13 +67,12 @@ def olist_handler(lines):
     return html_list, line_count
 
 
-def inline_formating(line):
+def b_formating(line):
     """
-    Function used to handle formating: converts markdown bold and italic
-    syntax to the HTML one:
-    **bold** to <b>bold</b> and _italic_ to <em>italic</em>.
-    :params line: str - the line to be checked for special formating.
-    Returns: the correctly formated line.
+    Functon used to convert markdown bold syntax to the HTML one:
+    **emphasis** into <b>emphasis</b>
+    :params line: str - a line of the markdown to be pased for bold syntax
+    Returns: the line string with the bold HTML syntax
     """
     formatted_line = []
     i = 0
@@ -90,9 +89,26 @@ def inline_formating(line):
                 i = next_b_tag + 2
             else:
                 formatted_line.append(line[i])
-                print(f'After append bold loop: {formatted_line} - index: {i}')
                 i += 1
-        elif line[i:i+2] == '__':
+        else:
+            formatted_line.append(line[i])
+            i += 1
+
+    return "".join(formatted_line)
+
+
+def em_formating(line):
+    """
+    Functon used to convert markdown emphasis syntax to the HTML one:
+    __emphasis__ into <em>emphasis</em>
+    :params line: str - a line of the markdown to be pased for emphasis syntax
+    Returns: the line string with te HTML syntax for emphasis
+    """
+    formatted_line = []
+    i = 0
+
+    while i < len(line):
+        if line[i:i+2] == '__':
             next_em_tag = line.find('__', i+2)
             if next_em_tag != -1:
                 formatted_line.append('<em>')
@@ -106,9 +122,7 @@ def inline_formating(line):
             formatted_line.append(line[i])
             i += 1
 
-    result = "".join(formatted_line)
-    print(f'Joined lines: {result}')
-    return result
+    return "".join(formatted_line)
 
 
 def markdown2html(markdown_content):
@@ -119,7 +133,8 @@ def markdown2html(markdown_content):
     """
     html_lines = []
     lines = markdown_content.splitlines()
-    formatted_lines = [inline_formating(line) for line in lines]
+    b_formatted_lines = [b_formating(line) for line in lines]
+    formatted_lines = [em_formating(line) for line in b_formatted_lines]
     i = 0
 
     while i < len(formatted_lines):
