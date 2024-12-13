@@ -19,7 +19,7 @@ def paragraph_handler(lines):
         if line.strip() == '':
             break
         if line_count > 0:
-            paragraph_lines.append('<br />')
+            paragraph_lines.append('<br/>')
         paragraph_lines.append(line)
         line_count += 1
 
