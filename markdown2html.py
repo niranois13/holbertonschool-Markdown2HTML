@@ -80,7 +80,7 @@ def b_formating(line):
     print(f'Input line: {line}')
 
     while i < len(line):
-        if line[i:i+2] == '**':
+        if line[i:i+2] == '**' and line[i-1] != "\\":
             next_b_tag = line.find('**', i+2)
             if next_b_tag != -1:
                 formatted_line.append('<b>')
@@ -108,7 +108,7 @@ def em_formating(line):
     i = 0
 
     while i < len(line):
-        if line[i:i+2] == '__':
+        if line[i:i+2] == '__' and line[i-1] != "\\":
             next_em_tag = line.find('__', i+2)
             if next_em_tag != -1:
                 formatted_line.append('<em>')
